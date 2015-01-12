@@ -50,12 +50,15 @@ namespace MvcSample.Web
                     services.Configure<MvcOptions>(options =>
                     {
                         options.Filters.Add(typeof(PassThroughAttribute), order: 17);
+
+                        options.AddXmlDataContractSerializerFormatter();
                     });
                     services.Configure<RazorViewEngineOptions>(options =>
                     {
                         var expander = new LanguageViewLocationExpander(
                             context => context.HttpContext.Request.Query["language"]);
                         options.ViewLocationExpanders.Insert(0, expander);
+                        
                     });
 
                     // Create the autofac container

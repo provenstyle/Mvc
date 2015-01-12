@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.PipelineCore;
 using Microsoft.AspNet.Routing;
+using Microsoft.Framework.OptionsModel;
 using Moq;
 using Xunit;
 
@@ -47,6 +48,13 @@ namespace System.Web.Http
             services
                 .Setup(s => s.GetService(typeof(IOutputFormattersProvider)))
                 .Returns(formatters.Object);
+
+            var mockOptions = new Mock<IOptions<MvcOptions>>();
+            mockOptions.SetupGet(o => o.Options)
+                       .Returns(new MvcOptions());
+
+            services.Setup(s => s.GetService(typeof(IOptions<MvcOptions>)))
+                       .Returns(mockOptions.Object);
 
             return services.Object;
         }

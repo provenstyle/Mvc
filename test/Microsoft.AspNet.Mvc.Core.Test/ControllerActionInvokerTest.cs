@@ -12,6 +12,7 @@ using Microsoft.AspNet.Mvc.ModelBinding;
 using Microsoft.AspNet.Routing;
 using Microsoft.AspNet.Testing;
 using Microsoft.Framework.DependencyInjection;
+using Microsoft.Framework.OptionsModel;
 using Moq;
 using Xunit;
 
@@ -1311,6 +1312,12 @@ namespace Microsoft.AspNet.Mvc
                        .Returns(mockFormattersProvider.Object);
             httpResponse.SetupGet(r => r.Body).Returns(new MemoryStream());
 
+            var mockOptions = new Mock<IOptions<MvcOptions>>();
+            mockOptions.SetupGet(o => o.Options)
+                       .Returns(new MvcOptions());
+            httpContext.Setup(o => o.RequestServices.GetService(typeof(IOptions<MvcOptions>)))
+                       .Returns(mockOptions.Object);
+
             var actionContext = new ActionContext(
                 httpContext: httpContext.Object,
                 routeData: new RouteData(),
@@ -1364,7 +1371,7 @@ namespace Microsoft.AspNet.Mvc
                         ParameterType = typeof(int),
                     }
                 },
-                FilterDescriptors = new List<FilterDescriptor>()
+                FilterDescriptors = new List<FilterDescriptor>(),
             };
 
             var binder = new Mock<IModelBinder>();

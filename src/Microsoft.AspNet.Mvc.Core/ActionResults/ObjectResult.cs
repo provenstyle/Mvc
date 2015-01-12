@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc.HeaderValueAbstractions;
 using Microsoft.Framework.DependencyInjection;
+using Microsoft.Framework.OptionsModel;
 
 namespace Microsoft.AspNet.Mvc
 {
@@ -64,19 +65,34 @@ namespace Microsoft.AspNet.Mvc
         {
             var incomingAcceptHeader = HeaderParsingHelpers.GetAcceptHeaders(
                                                 formatterContext.ActionContext.HttpContext.Request.Accept);
-            var sortedAcceptHeaders = SortMediaTypeWithQualityHeaderValues(incomingAcceptHeader)
+            var sortedAcceptHeaderMediaTypes = SortMediaTypeWithQualityHeaderValues(incomingAcceptHeader)
                                         .Where(header => header.Quality != HttpHeaderUtilitites.NoMatch)
                                         .ToArray();
 
+            var options = formatterContext.ActionContext.HttpContext
+                                                        .RequestServices
+                                                        .GetRequiredService<IOptions<MvcOptions>>()
+                                                        .Options;
+
             IOutputFormatter selectedFormatter = null;
+
+            bool ignoreAcceptHeader = false;
+            if (options.IgnoreBrowserAcceptHeader
+                    && HasWildCardMediaAndSubMediaType(sortedAcceptHeaderMediaTypes))
+            {
+                ignoreAcceptHeader = true;
+            }
 
             if (ContentTypes == null || ContentTypes.Count == 0)
             {
-                // Select based on sorted accept headers.
-                selectedFormatter = SelectFormatterUsingSortedAcceptHeaders(
-                                                                        formatterContext,
-                                                                        formatters,
-                                                                        sortedAcceptHeaders);
+                if(!ignoreAcceptHeader)
+                {
+                    // Select based on sorted accept headers.
+                    selectedFormatter = SelectFormatterUsingSortedAcceptHeaders(
+                                                                            formatterContext,
+                                                                            formatters,
+                                                                            sortedAcceptHeaderMediaTypes);
+                }
 
                 if (selectedFormatter == null)
                 {
@@ -124,20 +140,23 @@ namespace Microsoft.AspNet.Mvc
             }
             else
             {
-                // Filter and remove accept headers which cannot support any of the user specified content types.
-                var filteredAndSortedAcceptHeaders = sortedAcceptHeaders
-                                                        .Where(acceptHeader =>
-                                                                ContentTypes
-                                                                    .Any(contentType =>
-                                                                           contentType.IsSubsetOf(acceptHeader)))
-                                                        .ToArray();
-
-                if (filteredAndSortedAcceptHeaders.Length > 0)
+                if (!ignoreAcceptHeader)
                 {
-                    selectedFormatter = SelectFormatterUsingSortedAcceptHeaders(
-                                                                        formatterContext,
-                                                                        formatters,
-                                                                        filteredAndSortedAcceptHeaders);
+                    // Filter and remove accept headers which cannot support any of the user specified content types.
+                    var filteredAndSortedAcceptHeaders = sortedAcceptHeaderMediaTypes
+                                                                    .Where(acceptHeader =>
+                                                                            ContentTypes
+                                                                                .Any(contentType =>
+                                                                                       contentType.IsSubsetOf(acceptHeader)))
+                                                            .ToArray();
+
+                    if (filteredAndSortedAcceptHeaders.Length > 0)
+                    {
+                        selectedFormatter = SelectFormatterUsingSortedAcceptHeaders(
+                                                                            formatterContext,
+                                                                            formatters,
+                                                                            filteredAndSortedAcceptHeaders);
+                    }
                 }
 
                 if (selectedFormatter == null)
@@ -192,6 +211,17 @@ namespace Microsoft.AspNet.Mvc
                                                     .Any(contentType =>
                                                             formatter.CanWriteResult(formatterContext, contentType)));
             return selectedFormatter;
+        }
+
+        private bool HasWildCardMediaAndSubMediaType(MediaTypeWithQualityHeaderValue[] mediaTypes)
+        {
+            if (mediaTypes.Any(mediaType => mediaType.MediaType.Equals("*")
+                                             && mediaType.MediaSubType.Equals("*")))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private static MediaTypeWithQualityHeaderValue[] SortMediaTypeWithQualityHeaderValues

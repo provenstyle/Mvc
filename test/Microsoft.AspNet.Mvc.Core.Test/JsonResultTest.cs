@@ -11,6 +11,7 @@ using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc.HeaderValueAbstractions;
 using Microsoft.AspNet.PipelineCore;
 using Microsoft.AspNet.Routing;
+using Microsoft.Framework.OptionsModel;
 using Moq;
 using Xunit;
 
@@ -191,6 +192,12 @@ namespace Microsoft.AspNet.Mvc
             services
                 .Setup(s => s.GetService(typeof(IOutputFormattersProvider)))
                 .Returns(mockFormattersProvider.Object);
+
+            var mockOptions = new Mock<IOptions<MvcOptions>>();
+            mockOptions.SetupGet(o => o.Options)
+                       .Returns(new MvcOptions());
+            services.Setup(s => s.GetService(typeof(IOptions<MvcOptions>)))
+                       .Returns(mockOptions.Object);
 
             // This is the ultimate fallback, it will be used if none of the formatters from options
             // work.

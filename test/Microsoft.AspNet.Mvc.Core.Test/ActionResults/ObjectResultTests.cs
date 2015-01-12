@@ -70,7 +70,11 @@ namespace Microsoft.AspNet.Mvc.Core.Test.ActionResults
             httpResponse.SetupProperty<string>(o => o.ContentType);
             httpResponse.SetupGet(r => r.Body).Returns(stream);
 
-            var actionContext = CreateMockActionContext(httpResponse.Object, acceptHeader);
+            var actionContext = CreateMockActionContext(
+                                                new IOutputFormatter[] {new TextPlainFormatter(), new JsonOutputFormatter() },
+                                                httpResponse.Object, 
+                                                acceptHeader);
+
             var result = new ObjectResult(input);
 
             // Set the content type property explicitly.
@@ -94,7 +98,7 @@ namespace Microsoft.AspNet.Mvc.Core.Test.ActionResults
         {
             // Arrange
             var input = "testInput";
-            var actionContext = CreateMockActionContext();
+            var actionContext = CreateMockActionContext(new IOutputFormatter[] { new TextPlainFormatter(), new JsonOutputFormatter() });
 
             // Act
             var result = new ObjectResult(input);
@@ -112,7 +116,9 @@ namespace Microsoft.AspNet.Mvc.Core.Test.ActionResults
             // non string value.
             var input = 123;
             var httpResponse = GetMockHttpResponse();
-            var actionContext = CreateMockActionContext(httpResponse.Object);
+            var actionContext = CreateMockActionContext(
+                                                        new IOutputFormatter[] { new TextPlainFormatter(), new JsonOutputFormatter() },
+                                                        httpResponse.Object);
 
             // Set the content type property explicitly to a single value.
             var result = new ObjectResult(input);
@@ -136,7 +142,9 @@ namespace Microsoft.AspNet.Mvc.Core.Test.ActionResults
             // string value.
             var input = "1234";
             var httpResponse = GetMockHttpResponse();
-            var actionContext = CreateMockActionContext(httpResponse.Object);
+            var actionContext = CreateMockActionContext(
+                                            new IOutputFormatter[] { new TextPlainFormatter(), new JsonOutputFormatter() },
+                                            httpResponse.Object);
 
             // Set the content type property explicitly to a single value.
             var result = new ObjectResult(input);
@@ -157,7 +165,10 @@ namespace Microsoft.AspNet.Mvc.Core.Test.ActionResults
             var expectedContentType = "application/json;charset=utf-8";
             var input = "testInput";
             var httpResponse = GetMockHttpResponse();
-            var actionContext = CreateMockActionContext(httpResponse.Object, requestAcceptHeader: null);
+            var actionContext = CreateMockActionContext(
+                                            new IOutputFormatter[] { new TextPlainFormatter(), new JsonOutputFormatter() },
+                                            httpResponse.Object, 
+                                            requestAcceptHeader: null);
             var result = new ObjectResult(input);
 
             // It should not select TestOutputFormatter,
@@ -188,7 +199,10 @@ namespace Microsoft.AspNet.Mvc.Core.Test.ActionResults
             var stream = new MemoryStream();
 
             var httpResponse = GetMockHttpResponse();
-            var actionContext = CreateMockActionContext(httpResponse.Object, requestAcceptHeader: null);
+            var actionContext = CreateMockActionContext(
+                                                new IOutputFormatter[] { new TextPlainFormatter(), new JsonOutputFormatter() },
+                                                httpResponse.Object, 
+                                                requestAcceptHeader: null);
             var result = new ObjectResult(input);
 
             // It should select the mock formatter as that is the first one in the list.
@@ -223,7 +237,9 @@ namespace Microsoft.AspNet.Mvc.Core.Test.ActionResults
 
             var httpResponse = GetMockHttpResponse();
             var actionContext =
-                CreateMockActionContext(httpResponse.Object,
+                CreateMockActionContext(
+                                        new IOutputFormatter[] { new TextPlainFormatter(), new JsonOutputFormatter() },
+                                        httpResponse.Object,
                                         requestAcceptHeader: "text/custom;q=0.1,application/json;q=0.9",
                                         requestContentType: "application/custom");
             var result = new ObjectResult(input);
@@ -253,7 +269,9 @@ namespace Microsoft.AspNet.Mvc.Core.Test.ActionResults
             httpResponse.SetupProperty<string>(o => o.ContentType);
             httpResponse.SetupGet(r => r.Body).Returns(stream);
 
-            var actionContext = CreateMockActionContext(httpResponse.Object,
+            var actionContext = CreateMockActionContext(
+                                                        new IOutputFormatter[] { new TextPlainFormatter(), new JsonOutputFormatter() },
+                                                        httpResponse.Object,
                                                         requestAcceptHeader: null,
                                                         requestContentType: "application/json");
             var input = "testInput";
@@ -296,7 +314,9 @@ namespace Microsoft.AspNet.Mvc.Core.Test.ActionResults
             httpResponse.SetupProperty<string>(o => o.ContentType);
             httpResponse.SetupGet(r => r.Body).Returns(stream);
 
-            var actionContext = CreateMockActionContext(httpResponse.Object,
+            var actionContext = CreateMockActionContext(
+                                                        new IOutputFormatter[] { new TextPlainFormatter(), new JsonOutputFormatter() },
+                                                        httpResponse.Object,
                                                         requestAcceptHeader: acceptHeader,
                                                         requestContentType: "application/xml");
             var requestContentType = MediaTypeHeaderValue.Parse("application/xml");
@@ -354,7 +374,9 @@ namespace Microsoft.AspNet.Mvc.Core.Test.ActionResults
             httpResponse.SetupProperty<string>(o => o.ContentType);
             httpResponse.SetupGet(r => r.Body).Returns(stream);
 
-            var actionContext = CreateMockActionContext(httpResponse.Object,
+            var actionContext = CreateMockActionContext(
+                                                        new IOutputFormatter[] { new TextPlainFormatter(), new JsonOutputFormatter() },
+                                                        httpResponse.Object,
                                                         requestAcceptHeader: null,
                                                         requestContentType: null);
             var input = "testInput";
@@ -383,7 +405,9 @@ namespace Microsoft.AspNet.Mvc.Core.Test.ActionResults
             httpResponse.SetupProperty<string>(o => o.ContentType);
             httpResponse.SetupGet(r => r.Body).Returns(stream);
 
-            var actionContext = CreateMockActionContext(httpResponse.Object,
+            var actionContext = CreateMockActionContext(
+                                                        new IOutputFormatter[] { new TextPlainFormatter(), new JsonOutputFormatter() },
+                                                        httpResponse.Object,
                                                         requestAcceptHeader: null,
                                                         requestContentType: null);
             var input = "testInput";
@@ -414,7 +438,9 @@ namespace Microsoft.AspNet.Mvc.Core.Test.ActionResults
             httpResponse.SetupProperty<string>(o => o.ContentType);
             httpResponse.SetupGet(r => r.Body).Returns(stream);
 
-            var actionContext = CreateMockActionContext(httpResponse.Object,
+            var actionContext = CreateMockActionContext(
+                                                        new IOutputFormatter[] { new TextPlainFormatter(), new JsonOutputFormatter() },
+                                                        httpResponse.Object,
                                                         requestAcceptHeader: null,
                                                         requestContentType: null);
 
@@ -437,7 +463,9 @@ namespace Microsoft.AspNet.Mvc.Core.Test.ActionResults
             var nonStringValue = new { x1 = 10, y1 = "Hello" };
             var httpResponse = Mock.Of<HttpResponse>();
             httpResponse.Body = new MemoryStream();
-            var actionContext = CreateMockActionContext(httpResponse);
+            var actionContext = CreateMockActionContext(
+                                            new IOutputFormatter[] { new TextPlainFormatter(), new JsonOutputFormatter() },
+                                            httpResponse);
             var tempStream = new MemoryStream();
             var tempHttpContext = new Mock<HttpContext>();
             var tempHttpResponse = new Mock<HttpResponse>();
@@ -468,10 +496,126 @@ namespace Microsoft.AspNet.Mvc.Core.Test.ActionResults
             Assert.Equal(tempStream.ToArray(), ((MemoryStream)actionContext.HttpContext.Response.Body).ToArray());
         }
 
-        private static ActionContext CreateMockActionContext(HttpResponse response = null,
+        [Theory]
+        [InlineData("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8", 
+            "application/json;charset=utf-8")] //Chrome
+        [InlineData("text/html, application/xhtml+xml, */*", 
+            "application/json;charset=utf-8")] //IE
+        [InlineData("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", 
+            "application/json;charset=utf-8")] //Firefox
+        [InlineData("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", 
+            "application/json;charset=utf-8")] //Safari
+        [InlineData("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8", 
+            "application/json;charset=utf-8")] //Opera
+        [InlineData("*/*", @"application/json;charset=utf-8")]
+        public async Task ObjectResult_IgnoresContentNegotiation_OnWildcardAcceptHeaderMediaType(
+            string acceptHeader,
+            string expectedResponseContentType)
+        {
+            // Arrange
+            var objectResult = new ObjectResult(new Person() { Name = "John" });
+            var outputFormatters = new IOutputFormatter[] {
+                new HttpNoContentOutputFormatter(),
+                new TextPlainFormatter(),
+                new JsonOutputFormatter(),
+                new XmlDataContractSerializerOutputFormatter(XmlSerializerOutputFormatter.GetDefaultXmlWriterSettings())
+            };
+            var response = GetMockHttpResponse();
+                        
+            var actionContext = CreateMockActionContext(
+                                    outputFormatters,
+                                    response.Object,
+                                    requestAcceptHeader: acceptHeader);
+
+            // Act
+            await objectResult.ExecuteResultAsync(actionContext);
+
+            // Assert
+            response.VerifySet(resp => resp.ContentType = expectedResponseContentType);
+        }
+
+        [Theory]
+        [InlineData("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8", 
+            "application/xml;charset=utf-8")] //Chrome
+        [InlineData("text/html, application/xhtml+xml, */*", 
+            "application/json;charset=utf-8")] //IE
+        [InlineData("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "application/xml;charset=utf-8")] //Firefox
+        [InlineData("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", 
+            "application/xml;charset=utf-8")] //Safari
+        [InlineData("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8", 
+            "application/xml;charset=utf-8")] //Opera
+        [InlineData("*/*", 
+            "application/json;charset=utf-8")]
+        public async Task ObjectResult_DoesContentNegotiation_OnWildcardAcceptHeaderMediaType(
+            string acceptHeader,
+            string expectedResponseContentType)
+        {
+            // Arrange
+            var objectResult = new ObjectResult(new Person() { Name = "John" });
+            var outputFormatters = new IOutputFormatter[] {
+                new HttpNoContentOutputFormatter(),
+                new TextPlainFormatter(),
+                new JsonOutputFormatter(),
+                new XmlDataContractSerializerOutputFormatter(XmlSerializerOutputFormatter.GetDefaultXmlWriterSettings())
+            };
+            var response = GetMockHttpResponse();
+
+            var actionContext = CreateMockActionContext(
+                                    outputFormatters,
+                                    response.Object,
+                                    requestAcceptHeader: acceptHeader,
+                                    ignoreBrowserAcceptHeader: false);
+
+            // Act
+            await objectResult.ExecuteResultAsync(actionContext);
+
+            // Assert
+            response.VerifySet(resp => resp.ContentType = expectedResponseContentType);
+        }
+
+        [Theory]
+        [InlineData("application/xml;q=0.9,text/plain;q=0.5", "application/xml;charset=utf-8", true)]
+        [InlineData("application/xml;q=0.9,*/*;q=0.5", "application/json;charset=utf-8", true)]
+        [InlineData("application/xml;q=0.9,text/plain;q=0.5", "application/xml;charset=utf-8", false)]
+        [InlineData("application/xml;q=0.9,*/*;q=0.5", "application/xml;charset=utf-8", false)]
+        public async Task ObjectResult_WildcardAcceptMediaType_AndProducesAttribute(
+            string acceptHeader,
+            string expectedResponseContentType,
+            bool ignoreBrowserAcceptHeader)
+        {
+            // Arrange
+            var objectResult = new ObjectResult(new Person() { Name = "John" });
+            objectResult.ContentTypes.Add(MediaTypeHeaderValue.Parse("application/xml"));
+            objectResult.ContentTypes.Add(MediaTypeHeaderValue.Parse("application/json"));
+            var outputFormatters = new IOutputFormatter[] {
+                new HttpNoContentOutputFormatter(),
+                new TextPlainFormatter(),
+                new JsonOutputFormatter(),
+                new XmlDataContractSerializerOutputFormatter(XmlSerializerOutputFormatter.GetDefaultXmlWriterSettings())
+            };
+            var response = GetMockHttpResponse();
+
+            var actionContext = CreateMockActionContext(
+                                    outputFormatters,
+                                    response.Object,
+                                    acceptHeader,
+                                    ignoreBrowserAcceptHeader: ignoreBrowserAcceptHeader);
+
+            // Act
+            await objectResult.ExecuteResultAsync(actionContext);
+
+            // Assert
+            response.VerifySet(resp => resp.ContentType = expectedResponseContentType);
+        }
+
+        private static ActionContext CreateMockActionContext(
+                                                             IEnumerable<IOutputFormatter> outputFormatters,
+                                                             HttpResponse response = null,
                                                              string requestAcceptHeader = "application/*",
                                                              string requestContentType = "application/json",
-                                                             string requestAcceptCharsetHeader = "")
+                                                             string requestAcceptCharsetHeader = "",
+                                                             bool ignoreBrowserAcceptHeader = true)
         {
             var httpContext = new Mock<HttpContext>();
             if (response != null)
@@ -491,10 +635,20 @@ namespace Microsoft.AspNet.Mvc.Core.Test.ActionResults
             httpContext.Setup(o => o.Request).Returns(request.Object);
             httpContext.Setup(o => o.RequestServices).Returns(GetServiceProvider());
             httpContext.Setup(o => o.RequestServices.GetService(typeof(IOutputFormattersProvider)))
-                       .Returns(new TestOutputFormatterProvider());
+                       .Returns(new TestOutputFormatterProvider(outputFormatters));
+
+            var mockOptions = new Mock<IOptions<MvcOptions>>();
+            mockOptions.SetupGet(o => o.Options)
+                       .Returns(new MvcOptions()
+                       {
+                           IgnoreBrowserAcceptHeader = ignoreBrowserAcceptHeader
+                       });
+            httpContext.Setup(o => o.RequestServices.GetService(typeof(IOptions<MvcOptions>)))
+                       .Returns(mockOptions.Object);
+
             return new ActionContext(httpContext.Object, new RouteData(), new ActionDescriptor());
         }
-
+        
         private static Mock<HttpResponse> GetMockHttpResponse()
         {
             var stream = new MemoryStream();
@@ -552,15 +706,18 @@ namespace Microsoft.AspNet.Mvc.Core.Test.ActionResults
 
         private class TestOutputFormatterProvider : IOutputFormattersProvider
         {
+            private readonly IEnumerable<IOutputFormatter> _formatters;
+
+            public TestOutputFormatterProvider(IEnumerable<IOutputFormatter> formatters)
+            {
+                _formatters = formatters;
+            }
+
             public IReadOnlyList<IOutputFormatter> OutputFormatters
             {
                 get
                 {
-                    return new List<IOutputFormatter>()
-                        {
-                            new TextPlainFormatter(),
-                            new JsonOutputFormatter()
-                        };
+                    return _formatters.ToList();
                 }
             }
         }
