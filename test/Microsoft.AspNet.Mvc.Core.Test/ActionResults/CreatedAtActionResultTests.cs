@@ -86,21 +86,13 @@ namespace Microsoft.AspNet.Mvc
 
         private static HttpContext GetHttpContext()
         {
-            var httpContext = new Mock<HttpContext>();
-            var realContext = new DefaultHttpContext();
-            var request = realContext.Request;
-            request.PathBase = new PathString("");
-            var response = realContext.Response;
-            response.Body = new MemoryStream();
-
-            httpContext.Setup(o => o.Request)
-                       .Returns(request);
-            httpContext.Setup(o => o.Response)
-                       .Returns(response);
-            httpContext.Setup(o => o.RequestServices.GetService(typeof(IOutputFormattersProvider)))
-                       .Returns(new TestOutputFormatterProvider());
-
-            return httpContext.Object;
+            var httpContext = new DefaultHttpContext();
+            httpContext.Request.PathBase = new PathString("");
+            httpContext.Response.Body = new MemoryStream();
+            var services = new Mock<IServiceProvider>();
+            services.Setup(p => p.GetService(typeof(IOutputFormattersProvider))).Returns(new TestOutputFormatterProvider());
+            httpContext.RequestServices = services.Object;
+            return httpContext;
         }
 
         private static IUrlHelper GetMockUrlHelper(string returnValue)
