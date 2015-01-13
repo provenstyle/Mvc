@@ -19,8 +19,8 @@ namespace Microsoft.AspNet.Mvc
             var cache = new ResponseCacheAttribute() { NoStore = true };
 
             // Act & Assert
-            Assert.Throws<InvalidOperationException>(
-                () => { cache.OnActionExecuting(context); });
+            var exception = Assert.Throws<InvalidOperationException>(() => { cache.OnActionExecuting(context); });
+            Assert.Equal("Duration parameter must be specified.", exception.Message);
         }
 
         public static IEnumerable<object[]> CacheControlData
@@ -202,18 +202,18 @@ namespace Microsoft.AspNet.Mvc
         }
 
         [Fact]
-        public void ContainsInnerFilterReturnsTrueWhenInnerFiltersArePresent()
+        public void IsOverriden_ReturnsTrueWhenInnerFiltersArePresent()
         {
             // Arrange
             var caches = new List<IFilter>();
-            caches.Add(new ResponseCacheAttribute() { Order = 1 });
-            caches.Add(new ResponseCacheAttribute() { Order = 5 });
+            caches.Add(new ResponseCacheAttribute());
+            caches.Add(new ResponseCacheAttribute());
 
             var context = GetActionExecutingContext(caches);
 
             // Act & Assert
-            Assert.False((caches[0] as ResponseCacheAttribute).ContainsInnerFilter(context));
-            Assert.True((caches[1] as ResponseCacheAttribute).ContainsInnerFilter(context));
+            Assert.False((caches[0] as ResponseCacheAttribute).IsOverriden(context));
+            Assert.True((caches[1] as ResponseCacheAttribute).IsOverriden(context));
         }
 
         private ActionExecutingContext GetActionExecutingContext(List<IFilter> filters = null)

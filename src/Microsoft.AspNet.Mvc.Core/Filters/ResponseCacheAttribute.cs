@@ -12,19 +12,19 @@ namespace Microsoft.AspNet.Mvc
     /// An <see cref="ActionFilterAttribute"/> which sets the appropriate headers related to Response caching.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    public class ResponseCacheAttribute : ActionFilterAttribute
+    public class ResponseCacheAttribute : ActionFilterAttribute, IResponseCacheFilter
     {
         // A nullable-int cannot be used as an Attribute parameter.
         // Hence this nullable-int is present to back the Duration property.
         private int? _duration;
-        
+
         /// <summary>
         /// Gets or sets the duration in seconds for which the response is cached.
         /// This is a required parameter.
         /// This sets "max-age" in "Cache-control" header.
         /// </summary>
         public int Duration
-        { 
+        {
             get
             {
                 return _duration ?? 0;
@@ -58,7 +58,7 @@ namespace Microsoft.AspNet.Mvc
         {
             // If there are more filters which can override the values written by this filter,
             // then skip execution of this filter.
-            if (ContainsInnerFilter(context))
+            if (IsOverriden(context))
             {
                 return;
             }
@@ -84,6 +84,7 @@ namespace Microsoft.AspNet.Mvc
             if (NoStore)
             {
                 headers.Set("Cache-control", "no-store");
+
                 // Cache-control: no-store, no-cache is valid.
                 if (Location == ResponseCacheLocation.None)
                 {
@@ -123,10 +124,11 @@ namespace Microsoft.AspNet.Mvc
         }
 
         // internal for Unit Testing purposes.
-        internal bool ContainsInnerFilter([NotNull] ActionExecutingContext context)
+        internal bool IsOverriden([NotNull] ActionExecutingContext context)
         {
-            // Return true if there are any inner filters of type ResponseCacheAttribute.
-            return context.Filters.OfType<ResponseCacheAttribute>().Any(item => item.Order < Order);
+            // Return true if there are any filters which are after the current filter. In which case the current
+            // filter should be skipped.
+            return context.Filters.OfType<IResponseCacheFilter>().Last() != this;
         }
     }
 }
