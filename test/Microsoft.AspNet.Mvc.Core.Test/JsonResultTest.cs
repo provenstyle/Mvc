@@ -193,11 +193,11 @@ namespace Microsoft.AspNet.Mvc
                 .Setup(s => s.GetService(typeof(IOutputFormattersProvider)))
                 .Returns(mockFormattersProvider.Object);
 
-            var mockOptions = new Mock<IOptions<MvcOptions>>();
-            mockOptions.SetupGet(o => o.Options)
+            var options = new Mock<IOptions<MvcOptions>>();
+            options.SetupGet(o => o.Options)
                        .Returns(new MvcOptions());
             services.Setup(s => s.GetService(typeof(IOptions<MvcOptions>)))
-                       .Returns(mockOptions.Object);
+                       .Returns(options.Object);
 
             // This is the ultimate fallback, it will be used if none of the formatters from options
             // work.

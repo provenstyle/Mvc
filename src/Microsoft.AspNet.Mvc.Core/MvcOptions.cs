@@ -74,7 +74,7 @@ namespace Microsoft.AspNet.Mvc
         /// of exclude filters by <see cref="IValidationExcludeFiltersProvider"/>,
         /// </summary>
         public List<ExcludeValidationDescriptor> ValidationExcludeFilters { get; }
-        = new List<ExcludeValidationDescriptor>();
+            = new List<ExcludeValidationDescriptor>();
 
         /// <summary>
         /// Gets or sets the maximum number of validation errors that are allowed by this application before further
@@ -106,7 +106,7 @@ namespace Microsoft.AspNet.Mvc
         /// <see cref="ModelBinding.CompositeModelValidatorProvider"/>.
         /// </summary>
         public List<ModelValidatorProviderDescriptor> ModelValidatorProviders { get; }
-        = new List<ModelValidatorProviderDescriptor>();
+            = new List<ModelValidatorProviderDescriptor>();
 
         /// <summary>
         /// Gets a list of descriptors that represent <see cref="Rendering.IViewEngine"/> used
@@ -128,8 +128,8 @@ namespace Microsoft.AspNet.Mvc
 
         /// <summary>
         /// Gets or sets the flag which causes content negotiation to ignore Accept header 
-        /// when it contains the media type */*. <see langword="true"/> by default.
+        /// when it contains the media type */*. <see langword="false"/> by default.
         /// </summary>
-        public bool IgnoreBrowserAcceptHeader { get; set; } = true;
+        public bool RespectBrowserAcceptHeader { get; set; } = false;
     }
 }

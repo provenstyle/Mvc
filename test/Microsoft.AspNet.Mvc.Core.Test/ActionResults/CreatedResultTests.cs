@@ -71,8 +71,8 @@ namespace Microsoft.AspNet.Mvc
         {
             var httpContext = new Mock<HttpContext>();
 
-            var mockOptions = new Mock<IOptions<MvcOptions>>();
-            mockOptions.SetupGet(o => o.Options)
+            var options = new Mock<IOptions<MvcOptions>>();
+            options.SetupGet(o => o.Options)
                        .Returns(new MvcOptions());
 
             httpContext.Setup(o => o.Response)
@@ -80,7 +80,7 @@ namespace Microsoft.AspNet.Mvc
             httpContext.Setup(o => o.RequestServices.GetService(typeof(IOutputFormattersProvider)))
                        .Returns(new TestOutputFormatterProvider());
             httpContext.Setup(o => o.RequestServices.GetService(typeof(IOptions<MvcOptions>)))
-                       .Returns(mockOptions.Object);
+                       .Returns(options.Object);
             httpContext.Setup(o => o.Request.PathBase)
                        .Returns(new PathString(""));
 

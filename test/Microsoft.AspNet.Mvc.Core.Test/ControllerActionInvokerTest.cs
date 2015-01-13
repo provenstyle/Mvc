@@ -1312,11 +1312,11 @@ namespace Microsoft.AspNet.Mvc
                        .Returns(mockFormattersProvider.Object);
             httpResponse.SetupGet(r => r.Body).Returns(new MemoryStream());
 
-            var mockOptions = new Mock<IOptions<MvcOptions>>();
-            mockOptions.SetupGet(o => o.Options)
+            var options = new Mock<IOptions<MvcOptions>>();
+            options.SetupGet(o => o.Options)
                        .Returns(new MvcOptions());
             httpContext.Setup(o => o.RequestServices.GetService(typeof(IOptions<MvcOptions>)))
-                       .Returns(mockOptions.Object);
+                       .Returns(options.Object);
 
             var actionContext = new ActionContext(
                 httpContext: httpContext.Object,

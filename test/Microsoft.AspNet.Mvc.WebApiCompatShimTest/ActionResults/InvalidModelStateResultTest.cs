@@ -87,12 +87,12 @@ namespace System.Web.Http
                 .Setup(s => s.GetService(typeof(IOutputFormattersProvider)))
                 .Returns(formatters.Object);
 
-            var mockOptions = new Mock<IOptions<MvcOptions>>();
-            mockOptions.SetupGet(o => o.Options)
+            var options = new Mock<IOptions<MvcOptions>>();
+            options.SetupGet(o => o.Options)
                        .Returns(new MvcOptions());
 
             services.Setup(s => s.GetService(typeof(IOptions<MvcOptions>)))
-                       .Returns(mockOptions.Object);
+                       .Returns(options.Object);
 
             return services.Object;
         }

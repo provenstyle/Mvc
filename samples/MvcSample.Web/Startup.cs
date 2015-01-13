@@ -58,7 +58,6 @@ namespace MvcSample.Web
                         var expander = new LanguageViewLocationExpander(
                             context => context.HttpContext.Request.Query["language"]);
                         options.ViewLocationExpanders.Insert(0, expander);
-                        
                     });
 
                     // Create the autofac container

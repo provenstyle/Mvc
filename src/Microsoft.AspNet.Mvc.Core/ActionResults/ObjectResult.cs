@@ -69,6 +69,10 @@ namespace Microsoft.AspNet.Mvc
                                         .Where(header => header.Quality != HttpHeaderUtilitites.NoMatch)
                                         .ToArray();
 
+            // By default we want to ignore considering accept headers for content negotiation when
+            // they have a media type like */* in them. Browsers typically have these media types.
+            // In these cases we would want the first formatter in the list of output formatters to
+            // write the response. This default behavior can be changed through options, so checking here.
             var options = formatterContext.ActionContext.HttpContext
                                                         .RequestServices
                                                         .GetRequiredService<IOptions<MvcOptions>>()
@@ -76,16 +80,16 @@ namespace Microsoft.AspNet.Mvc
 
             IOutputFormatter selectedFormatter = null;
 
-            bool ignoreAcceptHeader = false;
-            if (options.IgnoreBrowserAcceptHeader
-                    && HasWildCardMediaAndSubMediaType(sortedAcceptHeaderMediaTypes))
+            bool respectAcceptHeader = true;
+            if (options.RespectBrowserAcceptHeader == false
+                && HasWildCardMediaAndSubMediaType(sortedAcceptHeaderMediaTypes))
             {
-                ignoreAcceptHeader = true;
+                respectAcceptHeader = false;
             }
 
             if (ContentTypes == null || ContentTypes.Count == 0)
             {
-                if(!ignoreAcceptHeader)
+                if (respectAcceptHeader)
                 {
                     // Select based on sorted accept headers.
                     selectedFormatter = SelectFormatterUsingSortedAcceptHeaders(
@@ -140,23 +144,19 @@ namespace Microsoft.AspNet.Mvc
             }
             else
             {
-                if (!ignoreAcceptHeader)
+                if (respectAcceptHeader)
                 {
                     // Filter and remove accept headers which cannot support any of the user specified content types.
                     var filteredAndSortedAcceptHeaders = sortedAcceptHeaderMediaTypes
                                                                     .Where(acceptHeader =>
                                                                             ContentTypes
                                                                                 .Any(contentType =>
-                                                                                       contentType.IsSubsetOf(acceptHeader)))
-                                                            .ToArray();
+                                                                                       contentType.IsSubsetOf(acceptHeader)));
 
-                    if (filteredAndSortedAcceptHeaders.Length > 0)
-                    {
-                        selectedFormatter = SelectFormatterUsingSortedAcceptHeaders(
-                                                                            formatterContext,
-                                                                            formatters,
-                                                                            filteredAndSortedAcceptHeaders);
-                    }
+                    selectedFormatter = SelectFormatterUsingSortedAcceptHeaders(
+                                                                        formatterContext,
+                                                                        formatters,
+                                                                        filteredAndSortedAcceptHeaders);
                 }
 
                 if (selectedFormatter == null)
@@ -215,8 +215,7 @@ namespace Microsoft.AspNet.Mvc
 
         private bool HasWildCardMediaAndSubMediaType(MediaTypeWithQualityHeaderValue[] mediaTypes)
         {
-            if (mediaTypes.Any(mediaType => mediaType.MediaType.Equals("*")
-                                             && mediaType.MediaSubType.Equals("*")))
+            if (mediaTypes.Any(mediaType => mediaType.MediaTypeRange == MediaTypeHeaderValueRange.AllMediaRange))
             {
                 return true;
             }

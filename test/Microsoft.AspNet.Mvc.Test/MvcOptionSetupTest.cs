@@ -130,7 +130,7 @@ namespace Microsoft.AspNet.Mvc
             setup.Configure(mvcOptions);
 
             // Assert
-            Assert.True(mvcOptions.IgnoreBrowserAcceptHeader);
+            Assert.False(mvcOptions.RespectBrowserAcceptHeader);
         }
 
         [Fact]
