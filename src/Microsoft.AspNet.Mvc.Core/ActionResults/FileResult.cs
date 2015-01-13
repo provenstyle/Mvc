@@ -57,7 +57,7 @@ namespace Microsoft.AspNet.Mvc
                 // basis for the actual filename, where possible.
                 var cd = new ContentDispositionHeaderValue("attachment");
                 cd.SetHttpFileName(FileDownloadName);
-                context.HttpContext.Response.Headers.Set("Content-Disposition", cd.ToString());
+                context.HttpContext.Response.Headers.Set(HeaderNames.ContentDisposition, cd.ToString());
             }
 
             // We aren't flowing the cancellation token appropriately, see

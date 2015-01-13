@@ -51,12 +51,12 @@ namespace Microsoft.AspNet.Mvc.Test
             Assert.Equal(expectedMediaType.MediaType, actualMediaType.MediaType);
             Assert.Equal(expectedMediaType.SubType, actualMediaType.SubType);
             Assert.Equal(expectedMediaType.Charset, actualMediaType.Charset);
-            Assert.Equal(expectedMediaType.AllTypes, actualMediaType.AllTypes);
-            Assert.Equal(expectedMediaType.AllSubTypes, actualMediaType.AllSubTypes);
+            Assert.Equal(expectedMediaType.MatchesAllTypes, actualMediaType.MatchesAllTypes);
+            Assert.Equal(expectedMediaType.MatchesAllSubTypes, actualMediaType.MatchesAllSubTypes);
             Assert.Equal(expectedMediaType.Parameters.Count, actualMediaType.Parameters.Count);
             foreach (var item in expectedMediaType.Parameters)
             {
-                // TODO: Assert.Equal(item.Value, actualMediaType.Parameters[item.Key]);
+                Assert.Equal(item.Value, NameValueHeaderValue.Find(actualMediaType.Parameters, item.Name).Value);
             }
         }
 

@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
+using Microsoft.AspNet.PipelineCore.Collections;
 using Microsoft.Net.Http.Headers;
 using Moq;
 using Newtonsoft.Json;
@@ -103,10 +104,10 @@ namespace Microsoft.AspNet.Mvc.Core.Test.Formatters
         private static ActionContext GetActionContext(MediaTypeHeaderValue contentType)
         {
             var request = new Mock<HttpRequest>();
-            var headers = new Mock<IHeaderDictionary>();
+            var headers = new HeaderDictionary();
             request.Setup(r => r.ContentType).Returns(contentType.ToString());
-            request.SetupGet(r => r.Headers).Returns(headers.Object);
-            // TODO: request.SetupGet(f => f.AcceptCharset).Returns(contentType.Charset);
+            request.SetupGet(r => r.Headers).Returns(headers);
+            headers[HeaderNames.AcceptCharset] = contentType.Charset;
             var response = new Mock<HttpResponse>();
             response.SetupGet(f => f.Body).Returns(new MemoryStream());
             var httpContext = new Mock<HttpContext>();

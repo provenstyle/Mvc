@@ -47,30 +47,30 @@ namespace Microsoft.AspNet.Mvc
             {
                 if (!mediaType1.MediaType.Equals(mediaType2.MediaType, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (mediaType1.AllTypes)
+                    if (mediaType1.MatchesAllTypes)
                     {
                         return -1;
                     }
-                    else if (mediaType2.AllTypes)
+                    else if (mediaType2.MatchesAllTypes)
                     {
                         return 1;
                     }
-                    else if (mediaType1.AllSubTypes && !mediaType2.AllSubTypes)
+                    else if (mediaType1.MatchesAllSubTypes && !mediaType2.MatchesAllSubTypes)
                     {
                         return -1;
                     }
-                    else if (!mediaType1.AllSubTypes && mediaType2.AllSubTypes)
+                    else if (!mediaType1.MatchesAllSubTypes && mediaType2.MatchesAllSubTypes)
                     {
                         return 1;
                     }
                 }
                 else if (!mediaType1.SubType.Equals(mediaType2.SubType, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (mediaType1.AllSubTypes)
+                    if (mediaType1.MatchesAllSubTypes)
                     {
                         return -1;
                     }
-                    else if (mediaType2.AllSubTypes)
+                    else if (mediaType2.MatchesAllSubTypes)
                     {
                         return 1;
                     }

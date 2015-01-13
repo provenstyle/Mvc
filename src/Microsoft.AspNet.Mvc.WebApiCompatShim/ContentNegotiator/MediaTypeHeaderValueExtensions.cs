@@ -49,7 +49,10 @@ namespace System.Net.Http.Formatting
         /// media range.
         /// </param>
         /// <returns><c>true</c> if this is a subset of <paramref name="mediaType2"/>; false otherwise.</returns>
-        public static bool IsSubsetOf(this MediaTypeHeaderValue mediaType1, MediaTypeHeaderValue mediaType2, out MediaTypeFormatterMatchRanking mediaType2Range)
+        public static bool IsSubsetOf(
+            this MediaTypeHeaderValue mediaType1,
+            MediaTypeHeaderValue mediaType2,
+            out MediaTypeFormatterMatchRanking mediaType2Range)
         {
             // Performance-sensitive
             Debug.Assert(mediaType1 != null);

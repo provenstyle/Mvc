@@ -320,10 +320,15 @@ namespace System.Net.Http.Formatting
                 {
                     var supportedMediaType = supportedMediaTypes[i];
                     MediaTypeFormatterMatchRanking ranking;
-                    if (supportedMediaType != null && acceptMediaTypeValue.Quality != FormattingUtilities.NoMatch &&
+                    if (supportedMediaType != null &&
+                        acceptMediaTypeValue.Quality != FormattingUtilities.NoMatch &&
                         supportedMediaType.IsSubsetOf(acceptMediaTypeValue, out ranking))
                     {
-                        return new MediaTypeFormatterMatch(formatter, supportedMediaType, acceptMediaTypeValue.Quality, ranking);
+                        return new MediaTypeFormatterMatch(
+                            formatter,
+                            supportedMediaType,
+                            acceptMediaTypeValue.Quality,
+                            ranking);
                     }
                 }
             }
