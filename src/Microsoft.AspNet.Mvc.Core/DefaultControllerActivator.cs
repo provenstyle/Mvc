@@ -39,7 +39,7 @@ namespace Microsoft.AspNet.Mvc
         /// </summary>
         /// <param name="controller">The controller to activate.</param>
         /// <param name="context">The context of the executing action.</param>
-        public void Activate([NotNull] object controller, [NotNull] ActionContext context)
+        public virtual void Activate([NotNull] object controller, [NotNull] ActionContext context)
         {
             var controllerType = controller.GetType();
             var controllerTypeInfo = controllerType.GetTypeInfo();

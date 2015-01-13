@@ -32,7 +32,7 @@ namespace Microsoft.AspNet.Mvc
         }
 
         /// <inheritdoc />
-        public void Activate([NotNull] object viewComponent, [NotNull] ViewContext context)
+        public virtual void Activate([NotNull] object viewComponent, [NotNull] ViewContext context)
         {
             var propertiesToActivate = _injectActions.GetOrAdd(viewComponent.GetType(),
                                                                _getPropertiesToActivate);
