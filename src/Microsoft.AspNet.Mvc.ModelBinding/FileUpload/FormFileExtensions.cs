@@ -12,34 +12,6 @@ namespace Microsoft.AspNet.Mvc
     public static class FormFileExtensions
     {
         /// <summary>
-        /// Saves the contents of an uploaded file.
-        /// </summary>
-        /// <param name="formFile">The <see cref="IFormFile"/>.</param>
-        /// <param name="filename">The name of the file to create.</param>
-        public static void SaveAs([NotNull] this IFormFile formFile, string filename)
-        {
-            using (var fileStream = new FileStream(filename, FileMode.Create))
-            {
-                var inputStream = formFile.OpenReadStream();
-                inputStream.CopyTo(fileStream);
-            }
-        }
-
-        /// <summary>
-        /// Asynchronously saves the contents of an uploaded file.
-        /// </summary>
-        /// <param name="formFile">The <see cref="IFormFile"/>.</param>
-        /// <param name="filename">The name of the file to create.</param>
-        public async static Task SaveAsAsync([NotNull] this IFormFile formFile, string filename)
-        {
-            using (var fileStream = new FileStream(filename, FileMode.Create))
-            {
-                var inputStream = formFile.OpenReadStream();
-                await inputStream.CopyToAsync(fileStream);
-            }
-        }
-
-        /// <summary>
         /// Parses the content disposition header.
         /// </summary>
         /// TODO: Remove this when strongly typed header are in place.

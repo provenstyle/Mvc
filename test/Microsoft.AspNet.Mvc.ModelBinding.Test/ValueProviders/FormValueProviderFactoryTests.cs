@@ -42,7 +42,7 @@ namespace Microsoft.AspNet.Mvc.ModelBinding.Test
             var result = factory.GetValueProvider(context);
 
             // Assert
-            var valueProvider = Assert.IsType<FormCollectionValueProvider>(result);
+            var valueProvider = Assert.IsType<QueryStringValueProvider>(result);
             Assert.Equal(CultureInfo.CurrentCulture, valueProvider.Culture);
         }
 

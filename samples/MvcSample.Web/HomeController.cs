@@ -2,8 +2,10 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
@@ -90,6 +92,9 @@ namespace MvcSample.Web
             return View("MyView", user);
         }
 
+        [Activate]
+        public IHostingEnvironment HostingEnvironment { get; set; }
+
         /// <summary>
         /// Action that shows multiple file upload.
         /// </summary>
@@ -102,7 +107,7 @@ namespace MvcSample.Web
 
             foreach (var f in file)
             {
-                await f.SaveAsAsync("C:\\Temp\\test-file" + file.IndexOf(f));
+                await f.SaveAsAsync(Path.Combine(HostingEnvironment.WebRoot, "test-file" + file.IndexOf(f)));
             }
             return View();
         }
