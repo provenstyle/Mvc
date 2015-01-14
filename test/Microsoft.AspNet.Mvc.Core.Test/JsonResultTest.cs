@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Mvc.Xml;
 using Microsoft.AspNet.Mvc.HeaderValueAbstractions;
 using Microsoft.AspNet.PipelineCore;
 using Microsoft.AspNet.Routing;

@@ -6,7 +6,7 @@ using System.IO;
 using System.Xml;
 using Microsoft.AspNet.Mvc.HeaderValueAbstractions;
 
-namespace Microsoft.AspNet.Mvc
+namespace Microsoft.AspNet.Mvc.Xml
 {
     /// <summary>
     /// Abstract base class from which all XML Output Formatters derive from.
